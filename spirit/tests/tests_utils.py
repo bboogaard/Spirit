@@ -256,10 +256,10 @@ class UtilsDecoratorsTests(TestCase):
         self.assertIsInstance(view(req), HttpResponseRedirect)
 
         req.user = User()
-        req.user.is_moderator = False
+        req.user.forum_profile.is_moderator = False
         self.assertRaises(PermissionDenied, view, req)
 
-        req.user.is_moderator = True
+        req.user.forum_profile.is_moderator = True
         self.assertIsNone(view(req))
 
     def test_administrator_required(self):
@@ -276,10 +276,10 @@ class UtilsDecoratorsTests(TestCase):
         self.assertIsInstance(view(req), HttpResponseRedirect)
 
         req.user = User()
-        req.user.is_administrator = False
+        req.user.forum_profile.is_administrator = False
         self.assertRaises(PermissionDenied, view, req)
 
-        req.user.is_administrator = True
+        req.user.forum_profile.is_administrator = True
         self.assertIsNone(view(req))
 
 
@@ -302,9 +302,9 @@ class UtilsMarkdownTests(TestCase):
                                      '<a class="comment-mention" href="%s">@esteban</a>,'
                                      '<a class="comment-mention" href="%s">@\xe1\xe9\xed\xf3\xfa</a>, '
                                      '@fakeone</p>' %
-                                     (self.user.get_absolute_url(),
-                                      self.user2.get_absolute_url(),
-                                      self.user3.get_absolute_url()))
+                                     (self.user.forum_profile.get_absolute_url(),
+                                      self.user2.forum_profile.get_absolute_url(),
+                                      self.user3.forum_profile.get_absolute_url()))
 
     @override_settings(ST_MENTIONS_PER_COMMENT=2)
     def test_markdown_mentions_limit(self):

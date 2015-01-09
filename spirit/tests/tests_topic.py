@@ -175,7 +175,7 @@ class TopicViewTest(TestCase):
         topic_post_moderate.connect(topic_post_moderate_handler)
 
         utils.login(self)
-        self.user.is_moderator = True
+        self.user.forum_profile.is_moderator = True
         self.user.save()
 
         category = utils.create_category()
@@ -310,7 +310,7 @@ class TopicViewTest(TestCase):
         delete topic
         """
         utils.login(self)
-        self.user.is_moderator = True
+        self.user.forum_profile.is_moderator = True
         self.user.save()
 
         category = utils.create_category()
@@ -327,7 +327,7 @@ class TopicViewTest(TestCase):
         undelete topic
         """
         utils.login(self)
-        self.user.is_moderator = True
+        self.user.forum_profile.is_moderator = True
         self.user.save()
 
         category = utils.create_category()
@@ -348,7 +348,7 @@ class TopicViewTest(TestCase):
         topic_post_moderate.connect(topic_post_moderate_handler)
 
         utils.login(self)
-        self.user.is_moderator = True
+        self.user.forum_profile.is_moderator = True
         self.user.save()
 
         category = utils.create_category()
@@ -370,7 +370,7 @@ class TopicViewTest(TestCase):
         topic_post_moderate.connect(topic_post_moderate_handler)
 
         utils.login(self)
-        self.user.is_moderator = True
+        self.user.forum_profile.is_moderator = True
         self.user.save()
 
         category = utils.create_category()
@@ -392,7 +392,7 @@ class TopicViewTest(TestCase):
         topic_post_moderate.connect(topic_post_moderate_handler)
 
         utils.login(self)
-        self.user.is_moderator = True
+        self.user.forum_profile.is_moderator = True
         self.user.save()
 
         category = utils.create_category()
@@ -414,7 +414,7 @@ class TopicViewTest(TestCase):
         topic_post_moderate.connect(topic_post_moderate_handler)
 
         utils.login(self)
-        self.user.is_moderator = True
+        self.user.forum_profile.is_moderator = True
         self.user.save()
 
         category = utils.create_category()
