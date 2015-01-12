@@ -176,7 +176,7 @@ class TopicViewTest(TestCase):
 
         utils.login(self)
         self.user.forum_profile.is_moderator = True
-        self.user.save()
+        self.user.forum_profile.save()
 
         category = utils.create_category()
         topic = utils.create_topic(category=category, user=self.user)
@@ -311,7 +311,7 @@ class TopicViewTest(TestCase):
         """
         utils.login(self)
         self.user.forum_profile.is_moderator = True
-        self.user.save()
+        self.user.forum_profile.save()
 
         category = utils.create_category()
         topic = utils.create_topic(category)
@@ -328,7 +328,7 @@ class TopicViewTest(TestCase):
         """
         utils.login(self)
         self.user.forum_profile.is_moderator = True
-        self.user.save()
+        self.user.forum_profile.save()
 
         category = utils.create_category()
         topic = utils.create_topic(category, is_removed=True)
@@ -349,7 +349,7 @@ class TopicViewTest(TestCase):
 
         utils.login(self)
         self.user.forum_profile.is_moderator = True
-        self.user.save()
+        self.user.forum_profile.save()
 
         category = utils.create_category()
         topic = utils.create_topic(category)
@@ -371,7 +371,7 @@ class TopicViewTest(TestCase):
 
         utils.login(self)
         self.user.forum_profile.is_moderator = True
-        self.user.save()
+        self.user.forum_profile.save()
 
         category = utils.create_category()
         topic = utils.create_topic(category, is_closed=True)
@@ -393,7 +393,7 @@ class TopicViewTest(TestCase):
 
         utils.login(self)
         self.user.forum_profile.is_moderator = True
-        self.user.save()
+        self.user.forum_profile.save()
 
         category = utils.create_category()
         topic = utils.create_topic(category)
@@ -415,7 +415,7 @@ class TopicViewTest(TestCase):
 
         utils.login(self)
         self.user.forum_profile.is_moderator = True
-        self.user.save()
+        self.user.forum_profile.save()
 
         category = utils.create_category()
         topic = utils.create_topic(category, is_pinned=True)
