@@ -31,8 +31,6 @@ from spirit.models.topic import Topic
 from spirit.models.category import Category
 from spirit.models.profile import ForumProfile
 
-from unittest import skip
-
 
 User = get_user_model()
 
@@ -68,7 +66,6 @@ class CommentViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['topic'], self.topic)
 
-    @skip
     def test_comment_publish_on_private(self):
         """
         create comment on private topic
@@ -79,11 +76,11 @@ class CommentViewTest(TestCase):
         form_data = {'comment': 'foobar', }
         response = self.client.post(reverse('spirit:comment-publish', kwargs={'topic_id': private.topic.pk, }),
                                     form_data)
-        expected_url = reverse('spirit:comment-find', kwargs={'pk': 1, })
+        comment = Comment.objects.first()
+        expected_url = reverse('spirit:comment-find', kwargs={'pk': comment.pk, })
         self.assertRedirects(response, expected_url, status_code=302, target_status_code=302)
         self.assertEqual(len(Comment.objects.all()), 1)
 
-    @skip
     def test_comment_publish_on_closed_topic(self):
         """
         should not be able to create a comment on a closed topic
@@ -96,8 +93,7 @@ class CommentViewTest(TestCase):
                                     form_data)
         self.assertEqual(response.status_code, 404)
 
-    @skip
-    def test_comment_publish_on_closed_cateory(self):
+    def test_comment_publish_on_closed_category(self):
         """
         should be able to create a comment on a closed category (if topic is not closed)
         """
@@ -110,7 +106,6 @@ class CommentViewTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(len(Comment.objects.all()), 1)
 
-    @skip
     def test_comment_publish_on_removed_topic_or_category(self):
         """
         should not be able to create a comment
@@ -145,7 +140,6 @@ class CommentViewTest(TestCase):
                                     form_data)
         self.assertEqual(response.status_code, 404)
 
-    @skip
     def test_comment_publish_no_access(self):
         """
         should not be able to create a comment on a private topic if has no access
@@ -159,7 +153,6 @@ class CommentViewTest(TestCase):
                                     form_data)
         self.assertEqual(response.status_code, 404)
 
-    @skip
     def test_comment_publish_signal(self):
         """
         create comment signal
@@ -174,7 +167,6 @@ class CommentViewTest(TestCase):
                                     form_data)
         self.assertEqual(self._comment.comment, 'foobar')
 
-    @skip
     def test_comment_publish_quote(self):
         """
         create comment quote
@@ -186,7 +178,6 @@ class CommentViewTest(TestCase):
         self.assertEqual(response.context['form'].initial['comment'],
                          markdown.quotify(comment.comment, comment.user.username))
 
-    @skip
     def test_comment_publish_next(self):
         """
         next on create comment
@@ -197,7 +188,6 @@ class CommentViewTest(TestCase):
                                     form_data)
         self.assertRedirects(response, '/fakepath/', status_code=302, target_status_code=404)
 
-    @skip
     def test_comment_update(self):
         """
         update comment
@@ -208,7 +198,7 @@ class CommentViewTest(TestCase):
         form_data = {'comment': 'barfoo', }
         response = self.client.post(reverse('spirit:comment-update', kwargs={'pk': comment.pk, }),
                                     form_data)
-        expected_url = reverse('spirit:comment-find', kwargs={'pk': 1, })
+        expected_url = reverse('spirit:comment-find', kwargs={'pk': comment.pk, })
         self.assertRedirects(response, expected_url, status_code=302, target_status_code=302)
         self.assertEqual(Comment.objects.get(pk=comment.pk).comment, 'barfoo')
 
@@ -218,7 +208,6 @@ class CommentViewTest(TestCase):
                                     form_data)
         self.assertRedirects(response, '/fakepath/', status_code=302, target_status_code=404)
 
-    @skip
     def test_comment_update_not_moderator(self):
         """
         non moderators can not update other people comments
@@ -232,7 +221,6 @@ class CommentViewTest(TestCase):
                                     form_data)
         self.assertEqual(response.status_code, 404)
 
-    @skip
     def test_comment_update_moderator(self):
         """
         moderators can update other people comments
@@ -245,11 +233,10 @@ class CommentViewTest(TestCase):
         form_data = {'comment': 'barfoo', }
         response = self.client.post(reverse('spirit:comment-update', kwargs={'pk': comment.pk, }),
                                     form_data)
-        expected_url = reverse('spirit:comment-find', kwargs={'pk': 1, })
+        expected_url = reverse('spirit:comment-find', kwargs={'pk': comment.pk, })
         self.assertRedirects(response, expected_url, status_code=302, target_status_code=302)
         self.assertEqual(Comment.objects.get(pk=comment.pk).comment, 'barfoo')
 
-    @skip
     def test_comment_update_signal(self):
         """
         update comment, emit signal
@@ -270,14 +257,12 @@ class CommentViewTest(TestCase):
         self.assertEqual(repr(self._comment_new), repr(Comment.objects.get(pk=comment_posted.pk)))
         self.assertEqual(repr(self._comment_old), repr(comment_posted))
 
-    @skip
     def test_comment_delete_permission_denied_to_non_moderator(self):
         req = RequestFactory().get('/')
         req.user = utils.create_user()
         req.user.forum_profile.is_moderator = False
         self.assertRaises(PermissionDenied, comment_delete, req)
 
-    @skip
     def test_comment_delete(self):
         """
         comment delete
@@ -295,7 +280,6 @@ class CommentViewTest(TestCase):
         response = self.client.get(reverse('spirit:comment-delete', kwargs={'pk': comment.pk, }))
         self.assertEqual(response.status_code, 200)
 
-    @skip
     def test_comment_undelete(self):
         """
         comment undelete
@@ -334,7 +318,6 @@ class CommentViewTest(TestCase):
         self.assertEqual(Comment.objects.filter(topic=to_topic.pk).count(), 2)
         self.assertEqual(Comment.objects.filter(topic=self.topic.pk).count(), 0)
 
-    @skip
     def test_comment_move_signal(self):
         """
         move comments, emit signal
@@ -352,10 +335,12 @@ class CommentViewTest(TestCase):
 
         utils.login(self)
         self.user.forum_profile.is_moderator = True
-        self.user.save()
+        self.user.forum_profile.save()
 
         comment = utils.create_comment(user=self.user, topic=self.topic)
         comment2 = utils.create_comment(user=self.user, topic=self.topic)
+        self.topic.comment_count = 2
+        self.topic.save()
         to_topic = utils.create_topic(self.category)
 
         form_data = {'topic': to_topic.pk,
@@ -367,7 +352,6 @@ class CommentViewTest(TestCase):
         self.assertEqual(self._comment_count, 2)
         self.assertEqual(repr(self._topic_from), repr(self.topic))
 
-    @skip
     def test_comment_find(self):
         """
         comment absolute and lazy url
@@ -377,7 +361,6 @@ class CommentViewTest(TestCase):
         expected_url = comment.topic.get_absolute_url() + "#c1"
         self.assertRedirects(response, expected_url, status_code=302)
 
-    @skip
     def test_comment_image_upload(self):
         """
         comment image upload
@@ -395,7 +378,6 @@ class CommentViewTest(TestCase):
         os.remove(os.path.join(settings.MEDIA_ROOT, 'spirit', 'images', str(self.user.pk),
                                "bf21c3043d749d5598366c26e7e4ab44.gif"))
 
-    @skip
     def test_comment_image_upload_invalid(self):
         """
         comment image upload, invalid image
