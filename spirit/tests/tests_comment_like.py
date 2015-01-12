@@ -61,6 +61,8 @@ class LikeViewTest(TestCase):
         """
         utils.login(self)
         like = CommentLike.objects.create(user=self.user, comment=self.comment)
+        self.comment.likes_count = 1
+        self.comment.save()
         form_data = {}
         response = self.client.post(reverse('spirit:like-delete', kwargs={'pk': like.pk, }),
                                     form_data)
@@ -73,6 +75,8 @@ class LikeViewTest(TestCase):
         """
         utils.login(self)
         like = CommentLike.objects.create(user=self.user, comment=self.comment)
+        self.comment.likes_count = 1
+        self.comment.save()
         form_data = {'next': '/fakepath/', }
         response = self.client.post(reverse('spirit:like-delete', kwargs={'pk': like.pk, }),
                                     form_data)
